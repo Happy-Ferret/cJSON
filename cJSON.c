@@ -225,8 +225,20 @@ static const char *parse_number(cJSON *item, const char *num)
     n = sign * n * pow(10.0, (scale + subscale * signsubscale));
 
     item->valuedouble = n;
-    item->valueint = (int)n;
     item->type = cJSON_Number;
+    /* create valueint with saturation behavior */
+    if (n >= (double)INT_MAX)
+    {
+        item->valueint = INT_MAX;
+    }
+    else if (n <= (double)INT_MIN)
+    {
+        item->valueint = INT_MIN;
+    }
+    else
+    {
+        item->valueint = (int)n;
+    }
 
     return num;
 }
